@@ -1,0 +1,307 @@
+basePath: /
+definitions:
+  models.BookingRequest:
+    properties:
+      check_in:
+        type: string
+      check_out:
+        type: string
+      suite_id:
+        type: integer
+    type: object
+  models.BookingResponse:
+    properties:
+      check_in:
+        type: string
+      check_out:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      suite_id:
+        type: integer
+      total_price:
+        type: number
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.UserResponse'
+      message:
+        type: string
+      token:
+        type: string
+    type: object
+  models.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.SuiteResponse:
+    properties:
+      category:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price_per_night:
+        type: number
+      stock:
+        type: integer
+    type: object
+  models.SuitesResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.SuiteResponse'
+        type: array
+      message:
+        type: string
+    type: object
+  models.TopUpRequest:
+    properties:
+      amount:
+        type: number
+    type: object
+  models.UserProfileResponse:
+    properties:
+      deposit_amount:
+        type: number
+      email:
+        type: string
+      id:
+        type: integer
+    type: object
+  models.UserProfileWrapper:
+    properties:
+      data:
+        $ref: '#/definitions/models.UserProfileResponse'
+      message:
+        type: string
+    type: object
+  models.UserResponse:
+    properties:
+      deposit_amount:
+        type: number
+      email:
+        type: string
+      id:
+        type: integer
+    type: object
+host: p2-ip-roisakurai-production.up.railway.app
+info:
+  contact: {}
+  description: API for Luxury Hotel Suite Rental
+  title: Luxury Hotel Suite Rental
+paths:
+  /booking-report:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BookingResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get booking history
+      tags:
+      - Booking
+  /bookings:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Booking Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.BookingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BookingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create booking
+      tags:
+      - Booking
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login and get JWT token
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - Auth
+  /profile:
+    get:
+      description: Get authenticated user profile including deposit amount
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserProfileWrapper'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - User
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create new user account
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register new user
+      tags:
+      - Auth
+  /suites:
+    get:
+      description: Retrieve all available hotel suites
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuitesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get list of suites
+      tags:
+      - Suites
+  /top-up:
+    post:
+      consumes:
+      - application/json
+      description: Add balance to authenticated user
+      parameters:
+      - description: Top Up Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.TopUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Top up user balance
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
