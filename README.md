@@ -27,6 +27,8 @@ Testify Mock
 Railway
 
 ## Project Structure
+
+```txt
 project/
 ├── config/
 ├── docs/
@@ -41,6 +43,8 @@ project/
 ├── main.go
 ├── .env
 └── README.md
+```
+
 
 ## Installation
 1. Clone Repository
@@ -88,34 +92,42 @@ Authorization: Bearer your_token
 ### Register
 POST /register
 
+```txt
 {
   "email": "user@mail.com",
   "password": "123456"
 }
+```
 
 ### Login
 POST /login
 
+```txt
 {
   "email": "user@mail.com",
   "password": "123456"
 }
+```
 
 ### Top Up
 POST /top-up
 
+```txt
 {
   "amount": 1000000
 }
+```
 
 ### Create Booking
 POST /bookings
 
+```txt
 {
   "suite_id": 1,
   "check_in": "2026-05-01",
   "check_out": "2026-05-03"
 }
+```
 
 ## Swagger Documentation
 Generate Swagger docs:
@@ -130,7 +142,9 @@ http://localhost:8080/swagger/index.html
 ## Unit Testing
 Run all tests:
 
+```txt
 go test ./... -v
+```
 
 ## Email Notification
 This project integrates with SendGrid API for:
